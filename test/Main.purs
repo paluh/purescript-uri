@@ -438,7 +438,7 @@ main = runTest $ suite "Data.URI" do
     testRunParseURIRefFailes "urn:oasis:names:specification:docbook:dtd:xml:4.1.2"
     testRunParseURIRefFailes "mailto:John.Doe@example.com"
     testRunParseURIRefFailes "mailto:fred@example.com"
-    testRunParseURIRefFailes "sql2:/?q=foo&var.bar=baz"
+    testRunParseURIRefFailes "sql2:/"
 
   suite "Query.print" do
     testPrintQuerySerializes
