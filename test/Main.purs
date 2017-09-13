@@ -113,8 +113,8 @@ main = runTest $ suite "Data.URI" do
     testRunParseSuccess Port.parser "63174" (Port 63174)
 
   suite "Authority parser" do
-    testRunParseSuccess Authority.parser "localhost" (Authority Nothing [Tuple (NameAddress "localhost") Nothing])
-    testRunParseSuccess Authority.parser "localhost:3000" (Authority Nothing [Tuple (NameAddress "localhost") (Just (Port 3000))])
+    testRunParseSuccess Authority.parser "//localhost" (Authority Nothing [Tuple (NameAddress "localhost") Nothing])
+    testRunParseSuccess Authority.parser "//localhost:3000" (Authority Nothing [Tuple (NameAddress "localhost") (Just (Port 3000))])
 
   suite "URIRef.parse" do
     testIsoURIRef
@@ -123,7 +123,7 @@ main = runTest $ suite "Data.URI" do
         (URI
           (Just (Scheme "sql2"))
           (HierarchicalPart
-            (Just (Authority Nothing []))
+            (Just (Authority Nothing [Tuple (NameAddress "") Nothing]))
             (Just (Left rootDir)))
           (Just (Query (Tuple "q" (Just "foo") : Tuple "var.bar" (Just "baz") : Nil)))
           Nothing))
@@ -346,6 +346,16 @@ main = runTest $ suite "Data.URI" do
     testIso
       AbsoluteURI.parser
       AbsoluteURI.print
+      "/top_story.htm"
+      (AbsoluteURI
+        Nothing
+        (HierarchicalPart
+          Nothing
+          (Just (Right (rootDir </> file "top_story.htm"))))
+        Nothing)
+    testIso
+      AbsoluteURI.parser
+      AbsoluteURI.print
       "couchbase://localhost/testBucket?password=&docTypeKey="
       (AbsoluteURI
         (Just (Scheme "couchbase"))
@@ -418,7 +428,6 @@ main = runTest $ suite "Data.URI" do
     testRunParseURIRefFailes "urn:oasis:names:specification:docbook:dtd:xml:4.1.2"
     testRunParseURIRefFailes "mailto:John.Doe@example.com"
     testRunParseURIRefFailes "mailto:fred@example.com"
-    testRunParseURIRefFailes "/top_story.htm"
 
   suite "Query.print" do
     testPrintQuerySerializes

@@ -21,7 +21,7 @@ parse = runParser parser
 parser ∷ Parser URI
 parser = URI
   <$> (optionMaybe Scheme.parser <* string ":")
-  <*> (string "//" *> HPart.parser)
+  <*> HPart.parser
   <*> optionMaybe (string "?" *> Query.parser)
   <*> optionMaybe (string "#" *> try Fragment.parser)
   <* eof
@@ -29,7 +29,7 @@ parser = URI
 print ∷ URI → String
 print (URI s h q f) =
   S.joinWith "" $ catMaybes
-    [ (\scheme → Scheme.print scheme <> "//") <$> s
+    [ Scheme.print <$> s
     , Just (HPart.print h)
     , Query.print <$> q
     , (\frag → "#" <> Fragment.print frag) <$> f

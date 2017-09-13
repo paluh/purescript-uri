@@ -9,7 +9,7 @@ import Data.URI (Host(..))
 import Data.URI.Common (decodePCT, joinWith, parsePCTEncoded, parseSubDelims, parseUnreserved, rxPat)
 import Global (encodeURI)
 import Text.Parsing.StringParser (Parser, try, fail)
-import Text.Parsing.StringParser.Combinators ((<?>), many1)
+import Text.Parsing.StringParser.Combinators (many, (<?>))
 import Text.Parsing.StringParser.String (string, char)
 
 parser ∷ Parser Host
@@ -40,7 +40,7 @@ ipv4AddressParser = IPv4Address <$> addr <?> "IPv4 address"
       _ -> fail "Invalid IPv4 address octet"
 
 regNameParser ∷ Parser Host
-regNameParser = NameAddress <<< joinWith "" <$> many1 p
+regNameParser = NameAddress <<< joinWith "" <$> many p
   where
   p = parseUnreserved <|> parsePCTEncoded decodePCT <|> parseSubDelims
 
