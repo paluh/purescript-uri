@@ -128,6 +128,16 @@ main = runTest $ suite "Data.URI" do
           (Just (Query (Tuple "q" (Just "foo") : Tuple "var.bar" (Just "baz") : Nil)))
           Nothing))
     testIsoURIRef
+      "sql2:/test"
+      (Left
+        (URI
+          (Just (Scheme "sql2"))
+          (HierarchicalPart
+            Nothing
+            (Just (Right (rootDir </> file "test"))))
+          Nothing
+          Nothing))
+    testIsoURIRef
       "mongodb://localhost"
       (Left
         (URI
@@ -428,6 +438,7 @@ main = runTest $ suite "Data.URI" do
     testRunParseURIRefFailes "urn:oasis:names:specification:docbook:dtd:xml:4.1.2"
     testRunParseURIRefFailes "mailto:John.Doe@example.com"
     testRunParseURIRefFailes "mailto:fred@example.com"
+    testRunParseURIRefFailes "sql2:/?q=foo&var.bar=baz"
 
   suite "Query.print" do
     testPrintQuerySerializes
