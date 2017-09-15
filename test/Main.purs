@@ -12,9 +12,8 @@ import Data.Either (isLeft, Either(..))
 import Data.List (List(..), singleton, (:))
 import Data.Maybe (Maybe(Nothing, Just))
 import Data.Monoid (mempty)
-import Data.Path.Pathy (currentDir, parentDir', file, dir, rootDir, (</>))
 import Data.Tuple (Tuple(..))
-import Data.URI (AbsoluteURI(..), Authority(..), Fragment(..), HierarchicalPart(..), Host(..), Port(..), Query(..), RelativePart(..), RelativeRef(..), Scheme(..), URI(..), UserInfo(..))
+import Data.URI (AbsoluteURI(..), Authority(..), Fragment(..), HierarchicalPart(..), Host(..), Path(..), Port(..), Query(..), RelativePart(..), RelativeRef(..), Scheme(..), URI(..), UserInfo(..))
 import Data.URI.AbsoluteURI as AbsoluteURI
 import Data.URI.Authority as Authority
 import Data.URI.Host as Host
@@ -124,7 +123,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "sql2"))
           (HierarchicalPart
             (Just (Authority Nothing [Tuple (NameAddress "") Nothing]))
-            (Just (Left rootDir)))
+            (Just (Path "/")))
           (Just (Query (Tuple "q" (Just "foo") : Tuple "var.bar" (Just "baz") : Nil)))
           Nothing))
     testIsoURIRef
@@ -134,7 +133,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "sql2"))
           (HierarchicalPart
             Nothing
-            (Just (Right (rootDir </> file "test"))))
+            (Just (Path ("/test"))))
           Nothing
           Nothing))
     testIsoURIRef
@@ -154,7 +153,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "http"))
           (HierarchicalPart
             (Just (Authority Nothing [Tuple (NameAddress "en.wikipedia.org") Nothing]))
-            ((Just (Right ((rootDir </> dir "wiki") </> file "URI_scheme")))))
+            ((Just (Path ("/wiki/URI_scheme")))))
           Nothing
           Nothing))
     testIsoURIRef
@@ -168,7 +167,7 @@ main = runTest $ suite "Data.URI" do
                 (Just (UserInfo "foo:bar"))
                 [ Tuple (NameAddress "db1.example.net") Nothing
                 , Tuple (NameAddress "db2.example.net") (Just (Port 2500))]))
-            (Just (Right (rootDir </> file "authdb"))))
+            (Just (Path "/authdb")))
           (Just
             (Query
               (Tuple "replicaSet" (Just "test") : Tuple "connectTimeoutMS" (Just "300000") : Nil)))
@@ -180,7 +179,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "mongodb"))
           (HierarchicalPart
             (Just (Authority (Just (UserInfo "foo:bar")) [(Tuple (NameAddress "db1.example.net") (Just (Port 6))),(Tuple (NameAddress "db2.example.net") (Just (Port 2500)))]))
-            (Just (Right (rootDir </> file "authdb"))))
+            (Just (Path "/authdb")))
           (Just (Query (Tuple "replicaSet" (Just "test") : Tuple "connectTimeoutMS" (Just "300000") : Nil)))
           Nothing))
     testIsoURIRef
@@ -223,7 +222,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "mongodb"))
           (HierarchicalPart
             (Just (Authority (Just (UserInfo "sysop:moon")) [(Tuple (NameAddress "localhost") Nothing)]))
-            (Just (Left rootDir)))
+            (Just (Path "/")))
           Nothing
           Nothing))
     testIsoURIRef
@@ -233,7 +232,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "mongodb"))
           (HierarchicalPart
             (Just (Authority (Just (UserInfo "sysop:moon")) [(Tuple (NameAddress "localhost") Nothing)]))
-            (Just (Right (rootDir </> file "records"))))
+            (Just (Path "/records")))
           Nothing
           Nothing))
     testIsoURIRef
@@ -273,7 +272,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "ftp"))
           (HierarchicalPart
             (Just (Authority Nothing [(Tuple (NameAddress "ftp.is.co.za") Nothing)]))
-            (Just (Right ((rootDir </> dir "rfc") </> file "rfc1808.txt"))))
+            (Just (Path ("/rfc/rfc1808.txt"))))
           Nothing
           Nothing))
     testIsoURIRef
@@ -281,7 +280,9 @@ main = runTest $ suite "Data.URI" do
       (Left
         (URI
           (Just (Scheme "http"))
-          (HierarchicalPart (Just (Authority Nothing [(Tuple (NameAddress "www.ietf.org") Nothing)])) (Just (Right ((rootDir </> dir "rfc") </> file "rfc2396.txt"))))
+          (HierarchicalPart
+            (Just (Authority Nothing [(Tuple (NameAddress "www.ietf.org") Nothing)]))
+            (Just (Path ("/rfc/rfc2396.txt"))))
           Nothing
           Nothing))
     testIsoURIRef
@@ -291,7 +292,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "ldap"))
           (HierarchicalPart
             (Just (Authority Nothing [(Tuple (IPv6Address "2001:db8::7") Nothing)]))
-            (Just (Right (rootDir </> file "c=GB"))))
+            (Just (Path ("/c=GB"))))
           (Just (Query (singleton $ (Tuple "objectClass?one" Nothing))))
           Nothing))
     testIsoURIRef
@@ -301,7 +302,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "telnet"))
           (HierarchicalPart
             (Just (Authority Nothing [(Tuple (IPv4Address "192.0.2.16") (Just (Port 80)))]))
-            (Just (Left rootDir)))
+            (Just (Path "/")))
           Nothing
           Nothing))
     testIsoURIRef
@@ -309,7 +310,7 @@ main = runTest $ suite "Data.URI" do
       (Left
         (URI
           (Just (Scheme "foo"))
-          (HierarchicalPart (Just (Authority Nothing [(Tuple (NameAddress "example.com") (Just (Port 8042)))])) (Just (Right ((rootDir </> dir "over") </> file "there"))))
+          (HierarchicalPart (Just (Authority Nothing [(Tuple (NameAddress "example.com") (Just (Port 8042)))])) (Just (Path "/over/there")))
           (Just (Query (singleton (Tuple "name" (Just "ferret")))))
           (Just (Fragment "nose"))))
     testIsoURIRef
@@ -332,7 +333,7 @@ main = runTest $ suite "Data.URI" do
               (Authority
                 (Just (UserInfo "cnn.example.com&story=breaking_news"))
                 [(Tuple (IPv4Address "10.0.0.1") Nothing)]))
-            (Just (Right (rootDir </> file "top_story.htm"))))
+            (Just (Path ("/top_story.htm"))))
           Nothing
           Nothing))
     testIsoURIRef
@@ -341,7 +342,7 @@ main = runTest $ suite "Data.URI" do
         (RelativeRef
           (RelativePart
             Nothing
-            (Just (Right ((parentDir' currentDir) </> file "top_story.htm"))))
+            (Just (Path ("../top_story.htm"))))
           Nothing
           Nothing))
     testIsoURIRef
@@ -350,19 +351,9 @@ main = runTest $ suite "Data.URI" do
         (RelativeRef
           (RelativePart
             Nothing
-            (Just (Right (currentDir </> file "top_story.htm"))))
+            (Just (Path "top_story.htm")))
           Nothing
           Nothing))
-    testIso
-      AbsoluteURI.parser
-      AbsoluteURI.print
-      "/top_story.htm"
-      (AbsoluteURI
-        Nothing
-        (HierarchicalPart
-          Nothing
-          (Just (Right (rootDir </> file "top_story.htm"))))
-        Nothing)
     testIso
       AbsoluteURI.parser
       AbsoluteURI.print
@@ -374,7 +365,7 @@ main = runTest $ suite "Data.URI" do
             (Authority
               Nothing
               [(Tuple (NameAddress "localhost") Nothing)]))
-          (Just (Right (rootDir </> file "testBucket"))))
+          (Just (Path "/testBucket")))
         (Just (Query (Tuple "password" (Just "") : Tuple "docTypeKey" (Just "") : Nil))))
     testIso
       AbsoluteURI.parser
@@ -387,8 +378,8 @@ main = runTest $ suite "Data.URI" do
             (Authority
               Nothing
               [(Tuple (NameAddress "localhost") (Just (Port 99999)))]))
-          (Just (Right (rootDir </> file "testBucket"))))
-        (Just (Query (Tuple "password" (Just "pass") : Tuple "docTypeKey" (Just "type") : Tuple "queryTimeoutSeconds" (Just "20") : Nil))))
+            (Just (Path ("/testBucket"))))
+         (Just (Query (Tuple "password" (Just "pass") : Tuple "docTypeKey" (Just "type") : Tuple "queryTimeoutSeconds" (Just "20") : Nil))))
     testIsoURIRef
       "http://www.example.com/some%20invented/url%20with%20spaces.html"
       (Left
@@ -396,7 +387,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "http"))
           (HierarchicalPart
             (Just (Authority Nothing [Tuple (NameAddress "www.example.com") Nothing]))
-            ((Just (Right ((rootDir </> dir "some invented") </> file "url with spaces.html")))))
+            ((Just (Path ("/some invented/url with spaces.html")))))
           Nothing
           Nothing))
     testIsoURIRef
@@ -406,7 +397,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "http"))
           (HierarchicalPart
             (Just (Authority Nothing [Tuple (NameAddress "localhost") (Just (Port 53174))]))
-            ((Just (Right (rootDir </> dir "metadata" </> dir "fs" </> dir "test" </> file "Пациенты# #")))))
+            ((Just (Path "/metadata/fs/test/Пациенты# #"))))
           (Just mempty)
           Nothing))
 
@@ -418,7 +409,7 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "http"))
           (HierarchicalPart
             (Just (Authority Nothing [Tuple (NameAddress "local.slamdata.com") Nothing]))
-            ((Just (Left rootDir))))
+            ((Just (Path "/"))))
           ((Just mempty))
           ((Just (Fragment "?sort=asc&q=path:/&salt=1177214")))))
     testPrinter
@@ -429,16 +420,69 @@ main = runTest $ suite "Data.URI" do
           (Just (Scheme "http"))
           (HierarchicalPart
             (Just (Authority Nothing [Tuple (NameAddress "local.slamdata.com") Nothing]))
-            ((Just (Left rootDir))))
+            ((Just (Path "/"))))
           ((Just mempty))
           ((Just (Fragment "?sort=asc&q=path:/&salt=1177214")))))
-
-    testRunParseURIRefFailes "news:comp.infosystems.www.servers.unix"
-    testRunParseURIRefFailes "tel:+1-816-555-1212"
-    testRunParseURIRefFailes "urn:oasis:names:specification:docbook:dtd:xml:4.1.2"
-    testRunParseURIRefFailes "mailto:John.Doe@example.com"
-    testRunParseURIRefFailes "mailto:fred@example.com"
-    testRunParseURIRefFailes "sql2:/"
+    testIso
+      AbsoluteURI.parser
+      AbsoluteURI.print
+      "urn:oasis:names:specification:docbook:dtd:xml:4.1.2"
+      (AbsoluteURI
+        (Just (Scheme "urn"))
+        (HierarchicalPart
+          Nothing
+          (Just (Path "oasis:names:specification:docbook:dtd:xml:4.1.2")))
+          Nothing)
+    testIso
+      AbsoluteURI.parser
+      AbsoluteURI.print
+      "news:comp.infosystems.www.servers.unix"
+      (AbsoluteURI
+        (Just (Scheme "news"))
+        (HierarchicalPart
+          Nothing
+          (Just (Path "comp.infosystems.www.servers.unix")))
+          Nothing)
+    testIso
+      AbsoluteURI.parser
+      AbsoluteURI.print
+      "tel:+1-816-555-1212"
+      (AbsoluteURI
+        (Just (Scheme "tel"))
+        (HierarchicalPart
+          Nothing
+          (Just (Path "+1-816-555-1212")))
+          Nothing)
+    testIso
+      AbsoluteURI.parser
+      AbsoluteURI.print
+      "mailto:John.Doe@example.com"
+      (AbsoluteURI
+        (Just (Scheme "mailto"))
+        (HierarchicalPart
+          Nothing
+          (Just (Path "John.Doe@example.com")))
+          Nothing)
+    testIso
+      AbsoluteURI.parser
+      AbsoluteURI.print
+      "mailto:fred@example.com"
+      (AbsoluteURI
+        (Just (Scheme "mailto"))
+        (HierarchicalPart
+          Nothing
+          (Just (Path "fred@example.com")))
+          Nothing)
+    testIso
+      AbsoluteURI.parser
+      AbsoluteURI.print
+      "sql2:/"
+      (AbsoluteURI
+        (Just (Scheme "sql2"))
+        (HierarchicalPart
+          Nothing
+          (Just (Path "/")))
+          Nothing)
 
   suite "Query.print" do
     testPrintQuerySerializes

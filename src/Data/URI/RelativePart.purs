@@ -8,7 +8,7 @@ import Data.Maybe (Maybe(..))
 import Data.String as S
 import Data.URI (RelativePart(..))
 import Data.URI.Authority as Authority
-import Data.URI.Path (printPath, parseURIPathRel, parsePathNoScheme, parsePathAbsolute, parsePathAbEmpty)
+import Data.URI.Path (printPath, parsePathNoScheme, parsePathAbsolute, parsePathAbEmpty)
 import Text.Parsing.StringParser (Parser)
 
 parser ∷ Parser RelativePart
@@ -18,13 +18,13 @@ parser = withAuth <|> withoutAuth
   withAuth =
     RelativePart
       <$> Just <$> Authority.parser
-      <*> parsePathAbEmpty parseURIPathRel
+      <*> parsePathAbEmpty
 
   withoutAuth = RelativePart Nothing <$> noAuthPath
 
   noAuthPath
-      = (Just <$> parsePathAbsolute parseURIPathRel)
-    <|> (Just <$> parsePathNoScheme parseURIPathRel)
+      = (Just <$> parsePathAbsolute)
+    <|> (Just <$> parsePathNoScheme)
     <|> pure Nothing
 
 print ∷ RelativePart → String

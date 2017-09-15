@@ -9,7 +9,7 @@ import Data.List (List)
 import Data.Maybe (Maybe)
 import Data.Monoid (class Monoid)
 import Data.Newtype (class Newtype)
-import Data.Path.Pathy (Path, File, Dir, Abs, Rel, Sandboxed, Unsandboxed)
+-- import Data.Path.Pathy (Path, File, Dir, Abs, Rel, Sandboxed, Unsandboxed)
 import Data.Tuple (Tuple)
 
 -- | A generic URI
@@ -36,15 +36,17 @@ derive instance ordRelativeRef ∷ Ord RelativeRef
 derive instance genericRelativeRef ∷ Generic RelativeRef _
 instance showRelativeRef ∷ Show RelativeRef where show = genericShow
 
--- | A general URI path, can be used to represent relative or absolute paths
--- | that are sandboxed or unsandboxed.
-type URIPath a s = Either (Path a Dir s) (Path a File s)
+-- foreign import kind Validation
+-- foreign import data Valid ∷ Validation
+-- foreign import data Checked ∷ Validation
 
--- | The path part for a generic or absolute URI.
-type URIPathAbs = URIPath Abs Sandboxed
-
--- | The path part for a relative reference.
-type URIPathRel = URIPath Rel Unsandboxed
+newtype Path = Path String
+derive instance newtypePath ∷ Newtype Path _
+derive instance genericPath ∷ Generic Path _
+derive instance eqPath ∷ Eq Path
+derive instance ordPath ∷ Ord Path
+instance showPath ∷ Show Path where
+  show = genericShow
 
 -- | An alias for the most common use case of resource identifiers.
 type URIRef = Either URI RelativeRef
@@ -59,7 +61,7 @@ derive instance newtypeScheme ∷ Newtype Scheme _
 instance showScheme ∷ Show Scheme where show = genericShow
 
 -- | The "hierarchical part" of a generic or absolute URI.
-data HierarchicalPart = HierarchicalPart (Maybe Authority) (Maybe URIPathAbs)
+data HierarchicalPart = HierarchicalPart (Maybe Authority) (Maybe Path)
 
 derive instance eqHierarchicalPart ∷ Eq HierarchicalPart
 derive instance ordHierarchicalPart ∷ Ord HierarchicalPart
@@ -67,7 +69,7 @@ derive instance genericHierarchicalPart ∷ Generic HierarchicalPart _
 instance showHierarchicalPart ∷ Show HierarchicalPart where show = genericShow
 
 -- | The "relative part" of a relative reference.
-data RelativePart = RelativePart (Maybe Authority) (Maybe URIPathRel)
+data RelativePart = RelativePart (Maybe Authority) (Maybe Path)
 
 derive instance eqRelativePart ∷ Eq RelativePart
 derive instance ordRelativePart ∷ Ord RelativePart

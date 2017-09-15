@@ -8,7 +8,7 @@ import Data.Maybe (Maybe(..))
 import Data.String as S
 import Data.URI (HierarchicalPart(..))
 import Data.URI.Authority as Authority
-import Data.URI.Path (printPath, parseURIPathAbs, parsePathRootless, parsePathAbsolute, parsePathAbEmpty)
+import Data.URI.Path (printPath, parsePathRootless, parsePathAbsolute, parsePathAbEmpty)
 import Text.Parsing.StringParser (Parser)
 
 parser ∷ Parser HierarchicalPart
@@ -17,13 +17,13 @@ parser = withAuth <|> withoutAuth
   withAuth =
     HierarchicalPart <<< Just
       <$> Authority.parser
-      <*> parsePathAbEmpty parseURIPathAbs
+      <*> parsePathAbEmpty
 
   withoutAuth = HierarchicalPart Nothing <$> noAuthPath
 
   noAuthPath
-      = (Just <$> parsePathAbsolute parseURIPathAbs)
-    <|> (Just <$> parsePathRootless parseURIPathAbs)
+      = (Just <$> parsePathAbsolute)
+    <|> (Just <$> parsePathRootless)
     <|> pure Nothing
 
 print ∷ HierarchicalPart → String
