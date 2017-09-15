@@ -9,7 +9,6 @@ import Data.List (List)
 import Data.Maybe (Maybe)
 import Data.Monoid (class Monoid)
 import Data.Newtype (class Newtype)
--- import Data.Path.Pathy (Path, File, Dir, Abs, Rel, Sandboxed, Unsandboxed)
 import Data.Tuple (Tuple)
 
 -- | A generic URI

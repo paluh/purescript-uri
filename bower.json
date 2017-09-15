@@ -20,7 +20,6 @@
     "purescript-globals": "^3.0.0",
     "purescript-integers": "^3.0.0",
     "purescript-maps": "^3.0.0",
-    "purescript-pathy": "^4.0.0",
     "purescript-string-parsers": "^3.0.0",
     "purescript-unfoldable": "^3.0.0",
     "purescript-generics-rep": "^5.2.0"
