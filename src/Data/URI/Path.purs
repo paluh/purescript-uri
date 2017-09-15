@@ -1,18 +1,12 @@
-module Data.URI.Path where
-  -- (
-  -- --  parseURIPathUnsandboxed
-  -- -- parsePath
-  -- -- , parsePathAbEmpty
-  -- -- , parsePathAbsolute
-  -- -- , parsePathNoScheme
-  -- -- , parsePathRootless
-  -- -- , parseSegment
-  -- -- , parseSegmentNonZero
-  -- -- , parseSegmentNonZeroNoColon
-  -- -- , parseURIPathAbs
-  -- -- , parseURIPathRel
-  -- -- , printPath
-  -- ) where
+module Data.URI.Path
+  ( parsePathAbEmpty
+  , parsePathAbsolute
+  , parsePathNoScheme
+  , parsePathRootless
+  , parseSegment
+  , parseSegmentNonZero
+  , printPath
+  ) where
 
 import Prelude
 
@@ -26,7 +20,7 @@ import Text.Parsing.StringParser (Parser, try)
 import Text.Parsing.StringParser.Combinators (many, many1)
 import Text.Parsing.StringParser.String (string)
 
-parsePathAbEmpty ∷ ∀ p. Parser (Maybe Path)
+parsePathAbEmpty ∷ Parser (Maybe Path)
 parsePathAbEmpty
   = try (Just <<< Path <$> (joinWith "" <$> many1 (append <$> string "/" <*> parseSegment)))
   <|> pure Nothing
@@ -74,18 +68,9 @@ parseSegmentNonZeroNoColon =
 decoder ∷ PCTEncoded → String
 decoder = Str.replaceAll (Str.Pattern "%23") (Str.Replacement "#") <<< decodePCT
 
-printPath ∷ ∀ a s. Path → String
+printPath ∷ Path → String
 printPath (Path p) =
     escape p
   where
     escape =
       Str.replaceAll (Str.Pattern "#") (Str.Replacement "%23") <<< encodeURI
-
--- parsePath ∷ ∀ p. Parser p → Parser (Maybe p)
--- parsePath p
---   = parsePathAbEmpty p
---   <|> (Just <$> parsePathAbsolute p)
---   <|> (Just <$> parsePathNoScheme p)
---   <|> (Just <$> parsePathRootless p)
---   <|> pure Nothing
--- 

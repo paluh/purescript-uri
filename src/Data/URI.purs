@@ -36,10 +36,6 @@ derive instance ordRelativeRef ∷ Ord RelativeRef
 derive instance genericRelativeRef ∷ Generic RelativeRef _
 instance showRelativeRef ∷ Show RelativeRef where show = genericShow
 
--- foreign import kind Validation
--- foreign import data Valid ∷ Validation
--- foreign import data Checked ∷ Validation
-
 newtype Path = Path String
 derive instance newtypePath ∷ Newtype Path _
 derive instance genericPath ∷ Generic Path _
