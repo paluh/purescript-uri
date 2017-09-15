@@ -12,7 +12,7 @@ import Data.Newtype (class Newtype)
 import Data.Tuple (Tuple)
 
 -- | A generic URI
-data URI = URI (Maybe Scheme) HierarchicalPart (Maybe Query) (Maybe Fragment)
+data URI = URI Scheme HierarchicalPart (Maybe Query) (Maybe Fragment)
 
 derive instance eqURI ∷ Eq URI
 derive instance ordURI ∷ Ord URI
@@ -20,7 +20,7 @@ derive instance genericURI ∷ Generic URI _
 instance showURI ∷ Show URI where show = genericShow
 
 -- | An absolute URI.
-data AbsoluteURI = AbsoluteURI (Maybe Scheme) HierarchicalPart (Maybe Query)
+data AbsoluteURI = AbsoluteURI Scheme HierarchicalPart (Maybe Query)
 
 derive instance eqAbsoluteURI ∷ Eq AbsoluteURI
 derive instance ordAbsoluteURI ∷ Ord AbsoluteURI

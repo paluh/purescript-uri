@@ -354,6 +354,15 @@ main = runTest $ suite "Data.URI" do
             (Just (Path "top_story.htm")))
           Nothing
           Nothing))
+    testIsoURIRef
+      "//test"
+      (Right
+        (RelativeRef
+          (RelativePart
+            (Just (Authority Nothing [Tuple (NameAddress "test") Nothing]))
+            Nothing)
+          Nothing
+          Nothing))
     testIso
       AbsoluteURI.parser
       AbsoluteURI.print
