@@ -4,9 +4,10 @@ import Prelude
 
 import Control.Alt ((<|>))
 import Data.Array (catMaybes)
+import Data.Lens (Lens', lens)
 import Data.Maybe (Maybe(..))
 import Data.String as S
-import Data.URI (RelativePart(..))
+import Data.URI (Authority, RelativePart(..), URIPathRel)
 import Data.URI.Authority as Authority
 import Data.URI.Path (printPath, parsePathNoScheme, parsePathAbsolute, parsePathAbEmpty)
 import Text.Parsing.StringParser (Parser)
@@ -34,3 +35,15 @@ print (RelativePart a p) =
       [ Authority.print <$> a
       , printPath <$> p
       ]
+
+_authority ∷ Lens' RelativePart (Maybe Authority)
+_authority =
+  lens
+    (\(RelativePart a _) → a)
+    (\(RelativePart _ p) a → RelativePart a p)
+
+_path ∷ Lens' RelativePart (Maybe URIPathRel)
+_path =
+  lens
+    (\(RelativePart _ p) → p)
+    (\(RelativePart a _) p → RelativePart a p)

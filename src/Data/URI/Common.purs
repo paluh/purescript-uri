@@ -3,7 +3,8 @@ module Data.URI.Common where
 import Prelude
 
 import Control.Alt ((<|>))
-import Data.Array (fromFoldable)
+import Control.MonadZero (guard)
+import Data.Array (fromFoldable, head)
 import Data.Either (Either(..), fromRight)
 import Data.List (List)
 import Data.Maybe (Maybe(..))
@@ -11,7 +12,7 @@ import Data.String as S
 import Data.String.Regex as RX
 import Data.String.Regex.Flags as RXF
 import Data.Unfoldable (replicateA)
-import Global (decodeURI, decodeURIComponent, encodeURIComponent)
+import Global (decodeURI, decodeURIComponent)
 import Partial.Unsafe (unsafePartial)
 import Text.Parsing.StringParser (ParseError(..), Parser(..), unParser)
 import Text.Parsing.StringParser.String (string)
@@ -43,21 +44,6 @@ parsePChar f
 parseUnreserved ∷ Parser String
 parseUnreserved = rxPat "[0-9a-z\\-\\._~]+"
 
-parseFragmentOrQuery ∷ Parser String
-parseFragmentOrQuery = parsePChar decodePCTComponent <|> string "/" <|> string "?"
-
-printFragmentOrQuery ∷ String → String
-printFragmentOrQuery = S.joinWith "" <<< map printChar <<< S.split (S.Pattern "")
-  where
-  -- Fragments & queries have a bunch of characters that don't need escaping
-  printChar ∷ String → String
-  printChar s
-    | RX.test rxPrintable s = s
-    | otherwise = encodeURIComponent s
-
-rxPrintable ∷ RX.Regex
-rxPrintable = unsafePartial fromRight $ RX.regex "[$&+;=/?:@]" RXF.global
-
 newtype PCTEncoded = PCTEncoded String
 
 decodePCT ∷ PCTEncoded → String
@@ -78,12 +64,12 @@ anyMatch rx = Parser \{ str: str, pos: i } → case match1From rx i str of
   Nothing → Left { error: (ParseError $ "Expected " <> show rx), pos: i }
 
 match1From ∷ RX.Regex → Int → String → Maybe String
-match1From = match1FromImpl Just Nothing
-
-foreign import match1FromImpl
-  ∷ (∀ a. a → Maybe a)
-  → (∀ a. Maybe a)
-  → RX.Regex
-  → Int
-  → String
-  → (Maybe String)
+match1From rx' n str' =
+  case RX.regex (RX.source rx') (RXF.global <> RX.flags rx') of
+    Left _ -> Nothing
+    Right rx -> do
+      let str = S.drop n str'
+      i <- RX.search rx str
+      guard $ i == 0
+      matches <- RX.match rx str
+      join $ head matches
