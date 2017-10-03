@@ -33,7 +33,7 @@ print (AbsoluteURI s h q) =
     , Query.print <$> q
     ]
 
-_scheme ∷ Lens' AbsoluteURI (Maybe Scheme)
+_scheme ∷ Lens' AbsoluteURI (Scheme)
 _scheme =
   lens
     (\(AbsoluteURI s _ _) → s)

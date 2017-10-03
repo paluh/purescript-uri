@@ -36,7 +36,7 @@ print (URI s h q f) =
     , (\frag → "#" <> Fragment.print frag) <$> f
     ]
 
-_scheme ∷ Lens' URI (Maybe Scheme)
+_scheme ∷ Lens' URI Scheme
 _scheme =
   lens
     (\(URI s _ _ _) → s)

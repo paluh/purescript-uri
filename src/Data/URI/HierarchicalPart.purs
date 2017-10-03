@@ -7,7 +7,7 @@ import Data.Array (catMaybes)
 import Data.Lens (Lens', lens)
 import Data.Maybe (Maybe(..))
 import Data.String as S
-import Data.URI (Authority, HierarchicalPart(..), URIPathAbs)
+import Data.URI (Authority, HierarchicalPart(..), Path)
 import Data.URI.Authority as Authority
 import Data.URI.Path (printPath, parsePathRootless, parsePathAbsolute, parsePathAbEmpty)
 import Text.Parsing.StringParser (Parser)
@@ -37,7 +37,7 @@ _authority =
     (\(HierarchicalPart a _) → a)
     (\(HierarchicalPart _ p) a → HierarchicalPart a p)
 
-_path ∷ Lens' HierarchicalPart (Maybe URIPathAbs)
+_path ∷ Lens' HierarchicalPart (Maybe Path)
 _path =
   lens
     (\(HierarchicalPart _ p) → p)
