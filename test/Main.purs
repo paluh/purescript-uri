@@ -58,10 +58,10 @@ testIsoURIRef = testIso URIRef.parser URIRef.print
 testRunParseURIRefParses :: forall a. String -> Either URI RelativeRef -> TestSuite a
 testRunParseURIRefParses = testRunParseSuccess URIRef.parser
 
-testRunParseURIRefFailes :: forall a. String -> TestSuite a
-testRunParseURIRefFailes uri =
+testRunParseURIRefFails :: forall a. String -> TestSuite a
+testRunParseURIRefFails uri =
   test
-    ("failes to parse: " <> uri)
+    ("fails to parse: " <> uri)
     (assert ("parse should fail for: " <> uri) <<< isLeft <<< URIRef.parse $ uri)
 
 testPrintQuerySerializes :: forall a. Query -> String -> TestSuite a
@@ -131,8 +131,14 @@ main = runTest $ suite "Data.URI" do
     testRunParseSuccess Port.parser "63174" (Port 63174)
 
   suite "Authority parser" do
-    testRunParseSuccess Authority.parser "//localhost" (Authority Nothing [Tuple (NameAddress "localhost") Nothing])
-    testRunParseSuccess Authority.parser "//localhost:3000" (Authority Nothing [Tuple (NameAddress "localhost") (Just (Port 3000))])
+    testRunParseSuccess
+      Authority.parser
+      "//localhost"
+      (Authority Nothing [Tuple (NameAddress "localhost") Nothing])
+    testRunParseSuccess
+      Authority.parser
+      "//localhost:3000"
+      (Authority Nothing [Tuple (NameAddress "localhost") (Just (Port 3000))])
 
   suite "URIRef.parse" do
     testIsoURIRef
@@ -379,6 +385,15 @@ main = runTest $ suite "Data.URI" do
           (RelativePart
             Nothing
             (Just (Path "top_story.htm")))
+          Nothing
+          Nothing))
+    testIsoURIRef
+      "/top_story.htm"
+      (Right
+        (RelativeRef
+          (RelativePart
+            Nothing
+            (Just (Path "/top_story.htm")))
           Nothing
           Nothing))
     testIsoURIRef
