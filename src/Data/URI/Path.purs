@@ -5,20 +5,32 @@ module Data.URI.Path
   , parsePathRootless
   , parseSegment
   , parseSegmentNonZero
+  , Path(..)
   , printPath
   ) where
 
 import Prelude
 
 import Control.Alt ((<|>))
+import Data.Generic.Rep (class Generic)
+import Data.Generic.Rep.Show (genericShow)
 import Data.Maybe (Maybe(Nothing, Just))
+import Data.Newtype (class Newtype)
 import Data.String as Str
-import Data.URI (Path(..))
 import Data.URI.Common (PCTEncoded, decodePCT, joinWith, parsePCTEncoded, parsePChar, parseSubDelims, parseUnreserved)
 import Global (encodeURI)
 import Text.Parsing.StringParser (Parser, try)
 import Text.Parsing.StringParser.Combinators (many, many1)
 import Text.Parsing.StringParser.String (string)
+
+newtype Path = Path String
+derive instance newtypePath ∷ Newtype Path _
+derive instance genericPath ∷ Generic Path _
+derive instance eqPath ∷ Eq Path
+derive instance ordPath ∷ Ord Path
+instance showPath ∷ Show Path where
+  show = genericShow
+
 
 parsePathAbEmpty ∷ Parser (Maybe Path)
 parsePathAbEmpty

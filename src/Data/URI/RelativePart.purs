@@ -1,16 +1,34 @@
-module Data.URI.RelativePart where
+module Data.URI.RelativePart
+  ( RelativePart(..)
+  , parser
+  , print
+  , _authority
+  , _path
+  , module Data.URI.Authority
+  , module Data.URI.Path
+  ) where
 
 import Prelude
 
 import Control.Alt ((<|>))
 import Data.Array (catMaybes)
+import Data.Generic.Rep (class Generic)
+import Data.Generic.Rep.Show (genericShow)
 import Data.Lens (Lens', lens)
 import Data.Maybe (Maybe(..))
 import Data.String as S
-import Data.URI (Authority, RelativePart(..), Path)
+import Data.URI.Authority (Authority(..), Host(..), Port(..), UserInfo(..))
 import Data.URI.Authority as Authority
-import Data.URI.Path (printPath, parsePathNoScheme, parsePathAbsolute, parsePathAbEmpty)
+import Data.URI.Path (printPath, parsePathNoScheme, parsePathAbsolute, parsePathAbEmpty, Path(..))
 import Text.Parsing.StringParser (Parser)
+
+-- | The "relative part" of a relative reference.
+data RelativePart = RelativePart (Maybe Authority) (Maybe Path)
+
+derive instance eqRelativePart ∷ Eq RelativePart
+derive instance ordRelativePart ∷ Ord RelativePart
+derive instance genericRelativePart ∷ Generic RelativePart _
+instance showRelativePart ∷ Show RelativePart where show = genericShow
 
 parser ∷ Parser RelativePart
 parser = withAuth <|> withoutAuth
