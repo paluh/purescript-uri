@@ -336,8 +336,8 @@ main = runTest $ suite "Data.URI" do
       "foo://example.com:8042/over/there?name=ferret#"
       (Left
         (URI
-          (Just (Scheme "foo"))
-          (HierarchicalPart (Just (Authority Nothing [(Tuple (NameAddress "example.com") (Just (Port 8042)))])) (Just (Right ((rootDir </> dir "over") </> file "there"))))
+          (Scheme "foo")
+          (HierarchicalPart (Just (Authority Nothing [(Tuple (NameAddress "example.com") (Just (Port 8042)))])) (Just (Path "/over/there")))
           (Just (Query (singleton (Tuple "name" (Just "ferret")))))
           (Just (Fragment ""))))
     testIsoURIRef
