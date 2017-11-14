@@ -14,14 +14,14 @@ import Data.URI.Query as Query
 import Data.URI.Scheme as Scheme
 import Text.Parsing.StringParser (Parser, ParseError, runParser)
 import Text.Parsing.StringParser.Combinators (optionMaybe)
-import Text.Parsing.StringParser.String (string, eof)
+import Text.Parsing.StringParser.String (eof)
 
 parse ∷ String → Either ParseError URI
 parse = runParser parser
 
 parser ∷ Parser URI
 parser = URI
-  <$> (Scheme.parser <* string ":")
+  <$> (Scheme.parser)
   <*> HPart.parser
   <*> optionMaybe Query.parser
   <*> optionMaybe Fragment.parser
