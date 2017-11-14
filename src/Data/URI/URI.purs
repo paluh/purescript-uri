@@ -23,7 +23,7 @@ parser ∷ Parser URI
 parser = URI
   <$> (Scheme.parser <* string ":")
   <*> HPart.parser
-  <*> optionMaybe (string "?" *> Query.parser)
+  <*> optionMaybe Query.parser
   <*> optionMaybe (string "#" *> try Fragment.parser)
   <* eof
 
