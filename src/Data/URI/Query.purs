@@ -14,6 +14,7 @@ import Data.List (List(..))
 import Data.Maybe (Maybe(..))
 import Data.Monoid (class Monoid)
 import Data.Newtype (class Newtype)
+import Data.String (Pattern(..), Replacement(..), replaceAll)
 import Data.String as S
 import Data.String.Regex as RX
 import Data.String.Regex.Flags as RXF
@@ -44,9 +45,11 @@ parseParts = sepBy parsePart (string ";" <|> string "&")
 
 parsePart ∷ Parser (Tuple String (Maybe String))
 parsePart = do
-  key ← decodeURIComponent <$> rxPat "[^=;&]+"
-  value ← optionMaybe $ decodeURIComponent <$> (string "=" *> rxPat "[^;&]*")
+  key ← decodePartElem <$> rxPat "[^=;&]+"
+  value ← optionMaybe $ decodePartElem <$> (string "=" *> rxPat "[^;&]*")
   pure $ Tuple key value
+ where
+  decodePartElem = decodeURIComponent <<< replaceAll (Pattern "+") (Replacement "%20")
 
 print ∷ Query → String
 print (Query m) =

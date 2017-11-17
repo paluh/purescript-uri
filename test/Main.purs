@@ -550,8 +550,8 @@ main = runTest $ suite "Data.URI" do
       (Query (Tuple "key1" Nothing : Tuple "key2" Nothing : Nil))
       "?key1&key2"
     testPrintQuerySerializes
-      (Query (Tuple "key1" (Just "foo;bar") : Nil))
-      "?key1=foo%3Bbar"
+      (Query (Tuple "key1" (Just "foo;bar baz") : Nil))
+      "?key1=foo%3Bbar%20baz"
 
   suite "Query.parser" do
     testParseQueryParses
@@ -564,8 +564,8 @@ main = runTest $ suite "Data.URI" do
       "?key1=&key2="
       (Query (Tuple "key1" (Just "") : Tuple "key2" (Just "") : Nil))
     testParseQueryParses
-      "?key1=foo%3Bbar"
-      (Query (Tuple "key1" (Just "foo;bar") : Nil))
+      "?key1=foo%3Bbar+baz"
+      (Query (Tuple "key1" (Just "foo;bar baz") : Nil))
 
   suite "Common.match1From" do
     testMatch1FromMisses (regex "key1" noFlags) 0 ""
